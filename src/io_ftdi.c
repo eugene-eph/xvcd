@@ -8,7 +8,8 @@
 #define PORT_TDI            0x02
 #define PORT_TDO            0x04
 #define PORT_TMS            0x08
-#define IO_OUTPUT (PORT_TCK|PORT_TDI|PORT_TMS)
+#define PORT_OE             0x80
+#define IO_OUTPUT (PORT_OE|PORT_TCK|PORT_TDI|PORT_TMS)
 
 #define USE_ASYNC
 
@@ -24,7 +25,7 @@ int io_init(int product, int vendor)
 {
 	int res;
 	if (product < 0)
-		product = 0x6010;
+		product = 0x6014;
 	if (vendor < 0)
 		vendor = 0x0403;
 	
@@ -93,7 +94,7 @@ int io_scan(const unsigned char *TMS, const unsigned char *TDI, unsigned char *T
 	
 	for (i = 0; i < bits; ++i)
 	{
-		unsigned char v = 0;
+		unsigned char v = PORT_OE;
 		if (TMS[i/8] & (1<<(i&7)))
 			v |= PORT_TMS;
 		if (TDI[i/8] & (1<<(i&7)))
